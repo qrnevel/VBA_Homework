@@ -1,0 +1,144 @@
+Sub VBA_Homework2()
+
+    'define variables
+
+    Dim ws As Worksheet
+    
+    Dim ticker As String
+    
+    Dim volume As Long
+    
+    Dim open_year As Double
+    
+    Dim end_year As Double
+    
+    Dim yearly_change As Double
+    
+    Dim percent_change As Double
+    
+    Dim Summary_Table_Row As Long
+
+    'run through each worksheet
+
+    For Each ws In ThisWorkbook.Worksheets
+
+        'headers
+
+        ws.Cells(1, 9).Value = "Ticker"
+        
+        ws.Cells(1, 10).Value = "Yearly Change"
+
+        ws.Cells(1, 11).Value = "Percent Change"
+
+        ws.Cells(1, 12).Value = "Total Stock Volume"
+        
+        ws.Cells(1, 16).Value = "Ticker"
+        
+        ws.Cells(1, 17).Value = "Value"
+        
+        ws.Cells(2, 15).Value = "Greatest % Increase"
+        
+        ws.Cells(3, 15).Value = "Greatest % Decrease"
+        
+        ws.Cells(4, 15).Value = "Greatest Total Volume"
+
+        'setup integers for loop
+
+        Summary_Table_Row = 2
+
+        'loop
+
+            For i = 2 To ws.UsedRange.Rows.Count
+
+                 If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+
+                    'find all the values
+
+                    ticker = ws.Cells(i, 1).Value
+
+                    volume = ws.Cells(i, 7).Value
+
+                    open_year = ws.Cells(i, 3).Value
+
+                    end_year = ws.Cells(i, 6).Value
+
+                    yearly_change = end_year - open_year
+
+                    If end_year = 0 Then
+
+                        percent_change = 0
+
+                    Else
+
+                        percent_change = (end_year - open_year) / end_year
+
+                    End If
+
+                    'insert values into summary
+
+                    ws.Cells(Summary_Table_Row, 9).Value = ticker
+
+                    ws.Cells(Summary_Table_Row, 10).Value = yearly_change
+
+                    ws.Cells(Summary_Table_Row, 11).Value = percent_change
+
+                    ws.Cells(Summary_Table_Row, 12).Value = volume
+
+                    Summary_Table_Row = Summary_Table_Row + 1
+
+                    volume = 0
+           
+
+                End If
+
+            'finish loop
+
+            Next i
+
+    ws.Columns("K").NumberFormat = "0.00%"
+
+        'format columns colors
+
+        Dim rg As Range
+        
+        Dim g As Long
+        
+        Dim c As Long
+        
+        Dim color_cell As Range
+
+        Set rg = ws.Range(ws.Range("J2"), ws.Range("J2").End(xlDown))
+
+        c = rg.Cells.Count
+
+        For g = 1 To c
+
+            Set color_cell = rg(g)
+
+            Select Case color_cell
+
+            Case Is >= 0
+
+                With color_cell
+
+                    .Interior.Color = vbGreen
+
+                End With
+
+            Case Is < 0
+
+                With color_cell
+
+                    .Interior.Color = vbRed
+
+                End With
+
+           End Select
+
+        Next g
+
+    'move to next worksheet
+
+    Next ws
+    
+    End Sub
